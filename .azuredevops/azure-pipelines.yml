@@ -1,0 +1,72 @@
+trigger:
+- main
+
+name: Deploy App
+
+parameters:
+  - name: env
+    displayName: Deployment Environment
+    type: string
+    default: prod
+    values:
+    - prod # Add other environments here
+
+
+variables:
+  - template: variables/global.yml # Variables consistent across all environments
+  - template: variables/${{ parameters.env }}.yml # Environment specific variables
+  - group: 'registry-secrets-group' # Variable group to securely store your password outside of source control
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+
+- stage: Build
+  displayName: Build image
+  jobs:  
+  - job: Build
+    displayName: Build and push Docker image
+    steps:
+    - task: Docker@1   
+      displayName: 'Build the Docker image'   
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+        command: 'Build an image'
+        dockerFile: './Dockerfile'
+        imageName: '$(imageName)'
+        useDefaultContext: true
+    - task: Docker@1    
+      displayName: 'Push the Docker image to Dockerhub'  
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+        command: 'Push an image'
+        imageName: '$(imageName)'
+      
+
+- stage: Deploy
+  dependsOn: Build
+  displayName: Deploy application
+  jobs:
+  - job: Deploy
+    displayName: Deploy container app
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Deploy container app'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(azureServiceConnection)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '$(resourceGroupName)'
+        location: '$(location)'
+        templateLocation: 'Linked artifact'
+        csmFile: '$(templateFile)'
+        overrideParameters: >-
+          -applicationName $(applicationName)
+          -registryUsername $(registryUsername)
+          -registryPassword $(registryPassword)
+          -publishedImageName $(imageName)
+          -revisionSuffix $(Build.BuildId)
+        deploymentMode: 'Incremental'
+        deploymentName: 'DeployPipelineTemplate'

@@ -1,0 +1,7 @@
+variables:
+  location: 'uksouth'
+  templateFile: './infra/main.bicep'
+  applicationName: 'aca-react'
+  registryUsername: '<REPLACEME>'
+  registryRepositoryName: '<REPLACEME>'
+  imageName: '$(registryUsername)/$(registryRepositoryName):$(Build.BuildId)' 
