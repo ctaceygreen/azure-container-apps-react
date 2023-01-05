@@ -26,7 +26,7 @@ You'll need to setup a few things first, and then it's just a case of replacing 
 4. The variables for your pipeline all live within '.azuredevops/variables'. This is where you'll need to replace all instances of "<REPLACEME>" with your own values.
 5. Run your pipeline from ADO, and get many green ticks of instant gratification :D
 
-# So let's look into the interesting parts of this repi in a bit more detail...
+# So let's look into the interesting parts of this repo in a bit more detail...
 TODO
 
 # Getting Started with Create React App
