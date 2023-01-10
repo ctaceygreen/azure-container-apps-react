@@ -23,7 +23,7 @@ You'll need to setup a few things first, and then it's just a case of replacing 
     - Service Connection (Azure Resource Manager)
     - Service Connection (Docker Registry)
 3. Create an Azure DevOps pipeline, and point it at the file '.azuredevops/azure-pipelines.yml'
-4. The variables for your pipeline all live within '.azuredevops/variables'. This is where you'll need to replace all instances of "<REPLACEME>" with your own values.
+4. The variables for your pipeline all live within '.azuredevops/variables'. This is where you'll need to replace all instances of "\<REPLACEME\>" with your own values.
 5. Run your pipeline from ADO, and get many green ticks of instant gratification :D
 
 # So let's look into the interesting parts of this repo in a bit more detail...
